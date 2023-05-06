@@ -1,32 +1,10 @@
-document.querySelector('#form').addEventListener('submit', function(e) {
-  e.preventDefault();
+/* Helper functions */
+function resetOnFocus(e) {
+  const id = e.target.id;
+  document.querySelector(`#${id}-error`).style.visibility = "hidden";
+}
 
-  const day = document.getElementById("day");
-  const month = document.getElementById("month");
-  const year = document.getElementById("year");
-
-  const today = new Date();
-  // console.log("today: " + today);
-  
-  const entry = new Date(year.value, month.value-1, day.value);
-  // const entry = new Date(1989, 10, 20);
-  // console.log("entry: " + entry);
-
-  // Compute the difference between today and entry dates
-  const diff = dateDiff(entry, today);
-
-  // Guard against future dates
-  if (diff.year < 0 || diff.month < 0 || diff.day < 0) {
-    return;
-  }
-
-  // obtain year difference of diff
-  document.querySelector("#y_diff").innerHTML = diff.year;
-  document.querySelector("#m_diff").innerHTML = diff.month;
-  document.querySelector("#d_diff").innerHTML = diff.day;
-})
-
-// Write a function to find the difference between two dates and return it as a human readable string (e.g. "1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds ago")
+// A function to find the difference between two dates and return it as a human readable string (e.g. "1 year, 2 months, 3 days, 4 hours, 5 minutes, 6 seconds ago")
 function dateDiff(date1, date2) {
   const d1 = date1.getDate();
   const m1 = 1 + date1.getMonth();
@@ -56,3 +34,81 @@ function dateDiff(date1, date2) {
   })
 }
 
+/* Add event listeners to the form inputs */
+document.querySelector('#day').addEventListener('focus', resetOnFocus);
+document.querySelector('#month').addEventListener('focus', resetOnFocus);
+document.querySelector('#year').addEventListener('focus', resetOnFocus);
+
+document.querySelector('#form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  // Obtain date values
+  const day = document.getElementById("day");
+  const month = document.getElementById("month");
+  const year = document.getElementById("year");
+
+  // Setup dates
+  const today = new Date();
+  const entry = new Date(year.value, month.value-1, day.value);
+
+  // Compute the difference between today and entry dates
+  const diff = dateDiff(entry, today);
+
+  let hasError = false;
+
+  // Guard against future years,
+  if (diff.year < 0) {
+    let elt = document.querySelector("#year-error");
+    elt.innerHTML = "Must be in the past";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+  
+  if (month.value > 12 || month.value < 1) {
+    let elt = document.querySelector("#month-error");
+    elt.innerHTML = "Must be a valid month";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+
+  if (day.value > 31 || day.value < 1) {
+    let elt = document.querySelector("#day-error");
+    elt.innerHTML = "Must be a valid day";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+
+  // Guard against empty fields
+  if (day.value === "") {
+    let elt = document.querySelector("#day-error");
+    elt.innerHTML = "This field is required";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+
+  if (month.value === "") {
+    let elt = document.querySelector("#month-error");
+    elt.innerHTML = "This field is required";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+
+  if (year.value === "") {
+    let elt = document.querySelector("#year-error");
+    elt.innerHTML = "This field is required";
+    elt.style.visibility = "visible";
+    hasError = true;
+  }
+
+  if (hasError) {
+    document.querySelector("#y_diff").innerHTML = "--";
+    document.querySelector("#m_diff").innerHTML = "--";
+    document.querySelector("#d_diff").innerHTML = "--";
+    return
+  }
+
+  // obtain year difference of diff
+  document.querySelector("#y_diff").innerHTML = diff.year;
+  document.querySelector("#m_diff").innerHTML = diff.month;
+  document.querySelector("#d_diff").innerHTML = diff.day;
+})

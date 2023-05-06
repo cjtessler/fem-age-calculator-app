@@ -13,20 +13,23 @@
 
 <body>
   <div class="container">
-    <form class="form-container" id="form">
+    <form class="form-container" id="form" novalidate>
       <div class="inputs-container">
         <div class="input-container">
           <label for="day">Day</label>
           <input type="number" id="day" name="day" min="1" max="31" size="2" maxlength="2" placeholder="DD" required>
+          <small class="error-message" id="day-error">error</small>
         </div>
         <div class="input-container">
           <label for="month">Month</label>
           <input type="number" id="month" name="month" min="1" max="12" size="2" maxlength="2" placeholder="MM" required>
+          <small class="error-message" id="month-error"></small>
         </div>
         <div class="input-container">
           <label for="year">Year</label>
           <input type="number" id="year" name="year" min="1900" max="2023" size="2" maxlength="4" placeholder="YYYY"
             required>
+          <small class="error-message" id="year-error"></small>
         </div>
       </div>
       <div class="divider-wrapper">
